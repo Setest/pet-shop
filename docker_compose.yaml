@@ -1,0 +1,22 @@
+version: "3.7"
+networks:
+  pet-shop:
+    driver: bridge
+
+services:
+  pet-shop-db:
+    image: postgres:9.6
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=db-user
+      - POSTGRES_PASSWORD=db-password
+    healthcheck:
+      test: PGPASSWORD='db-password' psql -U db-user --command='SELECT 1'
+      interval: 1s
+      timeout: 2s
+      retries: 5
+    networks:
+      - pet-shop
